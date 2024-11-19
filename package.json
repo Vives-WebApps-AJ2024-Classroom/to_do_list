@@ -26,6 +26,17 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "rules": {
+      "quotes": ["warn", "single"]
+    },
+    "overrides": [
+      {
+        "files": ["**/*.ts?(x)"],
+        "rules": {
+          "quotes": ["warn", "double"]
+        }
+      }
     ]
   },
   "browserslist": {
