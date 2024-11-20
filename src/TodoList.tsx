@@ -1,9 +1,9 @@
-import {useState} from "react";
+import {Key, useEffect, useState} from "react";
 import TodoItem from "./TodoItem";
 import Popup from "./popup";
 
 function TodoList() {
-    const [tasks, setTasks] = useState([
+    const defaultTasks = [
         {
             id: 1,
             text: "Studeren Web Apps",
@@ -14,12 +14,22 @@ function TodoList() {
             text: "Taak regeltechnieken",
             completed: false
         }
-    ])
+    ];
+
+    const [tasks, setTasks] = useState(() => {
+        // Load tasks from localStorage
+        const savedTasks = localStorage.getItem("tasks");
+        return savedTasks && JSON.parse(savedTasks).length > 0 ? JSON.parse(savedTasks) : defaultTasks;
+    });
 
     const [text, setText] = useState("");
     const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-    function addTask(text:string) {
+    useEffect(() => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }, [tasks]);
+
+    function addTask(text: string) {
         const newTask = {
             id: Date.now(),
             text,
@@ -29,13 +39,13 @@ function TodoList() {
         setText("");
     }
 
-    function deleteTask(id:any){
-        setTasks(tasks.filter((task) => task.id !== id))
+    function deleteTask(id: any) {
+        setTasks(tasks.filter((task: { id: any; }) => task.id !== id))
     }
 
-    function toggleCompleted(id:any) {
-        setTasks(tasks.map(task => {
-            if(task.id === id) {
+    function toggleCompleted(id: any) {
+        setTasks(tasks.map((task: { id: any; completed: any; }) => {
+            if (task.id === id) {
                 return {...task, completed: !task.completed};
             } else {
                 return task;
@@ -55,7 +65,7 @@ function TodoList() {
     return (
         <div className="todo-list">
             <h1>To do-list</h1>
-            {tasks.map(task => (
+            {tasks.map((task: { id: Key | null | undefined; }) => (
                 <TodoItem key={task.id} task={task} deleteTask={deleteTask} toggleCompleted={toggleCompleted}/>
             ))}
             <button onClick={handleAddButtonClick}>Add</button>
