@@ -14,12 +14,20 @@ function TodoList() {
         }
     ])
 
+    function deleteTask(id: number) {
+        setTasks(tasks.filter((filterTask) => filterTask.id !== id))
+    }
+
     return (
         <div className="todo-list">
             <h1>To do-list</h1>
             {tasks.map(task => (
-                <p>{task.text}</p>
-            ))}
+                    <>
+                        <p>{task.text}</p>
+                        <button onClick={() => deleteTask(task.id)}>X</button>
+                    </>
+                )
+            )}
         </div>
     );
 }
