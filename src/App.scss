@@ -3,3 +3,9 @@
 .App {
   text-align: center;
 }
+
+.todo-list div{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}

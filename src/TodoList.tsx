@@ -22,10 +22,10 @@ function TodoList() {
         <div className="todo-list">
             <h1>To do-list</h1>
             {tasks.map(task => (
-                    <>
+                    <div className="task" key={task.id}>
                         <p>{task.text}</p>
                         <button onClick={() => deleteTask(task.id)}>X</button>
-                    </>
+                    </div>
                 )
             )}
         </div>
