@@ -18,18 +18,30 @@ function TodoList() {
         setTasks(tasks.filter((filterTask) => filterTask.id !== id))
     }
 
+    function checkboxChangedStatus(id: number) {
+        setTasks(tasks.map(mappedTask => {
+            if(mappedTask.id === id) {
+                return {...mappedTask, completed: !mappedTask.completed};
+            } else {
+                return mappedTask;
+            }
+        }));
+    }
+
     return (
         <div className="todo-list">
             <h1>To do-list</h1>
-            {tasks.map(task => (
-                    <div className="task" key={task.id}>
-                        <p>{task.text}</p>
-                        <button onClick={() => deleteTask(task.id)}>X</button>
-                    </div>
-                )
-            )}
-        </div>
-    );
-}
+                {tasks.map(task => (
+                        <div className={`task ${task.completed ? 'completed' : ''}`} key={task.id}>
+                            <input type="checkbox" checked={task.completed}
+                                   onChange={() => checkboxChangedStatus(task.id)}/>
+                            <p>{task.text}</p>
+                            <button onClick={() => deleteTask(task.id)}>X</button>
+                        </div>
+                    )
+                )}
+            </div>
+            );
+            }
 
-export default TodoList;
+            export default TodoList;

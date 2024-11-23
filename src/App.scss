@@ -4,8 +4,13 @@
   text-align: center;
 }
 
-.todo-list div{
+.todo-list .task{
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;
+
+    &.completed p {
+      text-decoration: line-through;
+      color: #888;
+    }
 }
