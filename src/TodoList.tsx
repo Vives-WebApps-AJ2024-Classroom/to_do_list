@@ -12,12 +12,12 @@ function TodoList() {
             text: "Taak regeltechnieken",
             completed: false
         }
-    ])
+    ]);
 
     const [isPopupVisible, setIsPopupVisible] = useState(false);
 
     function deleteTask(id: number): void {
-        setTasks(tasks.filter((filterTask) => filterTask.id !== id))
+        setTasks(tasks.filter((filterTask) => filterTask.id !== id));
     }
 
     function checkboxChangedStatus(id: number): void {
@@ -35,7 +35,7 @@ function TodoList() {
             id: Date.now(),
             text: text,
             completed: false
-        }
+        };
         setTasks([...tasks, newTask]);
     }
 
@@ -58,40 +58,53 @@ function TodoList() {
     );
 }
 
-function TodoItem({task, checkboxChangedStatus, deleteTask}
-                      : {
-    task: { id: number; completed: boolean; text: string };
-    checkboxChangedStatus: (id: number) => void;
-    deleteTask: (id: number) => void
-}) {
+function TodoItem(
+    {task, checkboxChangedStatus, deleteTask}: {
+        task: { id: number; completed: boolean; text: string };
+        checkboxChangedStatus: () => void;
+        deleteTask: () => void;
+    }
+) {
     return (
-        <div className={`task ${task.completed ? 'completed' : ''}`} key={task.id}>
-            <input type="checkbox" checked={task.completed}
-                   onChange={() => checkboxChangedStatus(task.id)}/>
+        <div className={`task ${task.completed ? 'completed' : ''}`}>
+            <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={checkboxChangedStatus}
+            />
             <p>{task.text}</p>
-            <button onClick={() => deleteTask(task.id)}>X</button>
+            <button onClick={deleteTask}>X</button>
         </div>
-    )
+    );
 }
 
-function TodoPopup({addTask, setIsPopupVisible}: {
-    addTask: (text: string) => void;
-    setIsPopupVisible: (value: boolean) => void
-}) {
+function TodoPopup(
+    {addTask, setIsPopupVisible}: {
+        addTask: (text: string) => void;
+        setIsPopupVisible: (value: boolean) => void;
+    }
+) {
     const [popupText, setPopupText] = useState("");
 
     return (
         <div className="popup">
-            <input value={popupText} onChange={(e) => setPopupText(e.target.value)}/>
+            <input
+                value={popupText}
+                onChange={(e) => setPopupText(e.target.value)}
+            />
             <button onClick={() => {
+                if (popupText.trim() === "") {
+                    alert("Task cannot be empty!");
+                    return;
+                }
                 addTask(popupText);
-                setIsPopupVisible(false);
                 setPopupText("");
-            }}>Add
+                setIsPopupVisible(false);
+            }}>Add Task
             </button>
-            <button onClick={() => setIsPopupVisible(false)}>Cancel</button>
+            <button onClick={() => setIsPopupVisible(false)}>Cancel Adding</button>
         </div>
-    )
+    );
 }
 
 export default TodoList;
