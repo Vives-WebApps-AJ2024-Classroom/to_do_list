@@ -1,5 +1,4 @@
 import {useState} from "react";
-import {text} from "node:stream/consumers";
 
 function TodoList() {
     const [tasks, setTasks] = useState([
@@ -15,16 +14,15 @@ function TodoList() {
         }
     ])
 
-    const [popupText, setPopupText] = useState("");
     const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-    function deleteTask(id: number) {
+    function deleteTask(id: number): void {
         setTasks(tasks.filter((filterTask) => filterTask.id !== id))
     }
 
-    function checkboxChangedStatus(id: number) {
+    function checkboxChangedStatus(id: number): void {
         setTasks(tasks.map(mappedTask => {
-            if(mappedTask.id === id) {
+            if (mappedTask.id === id) {
                 return {...mappedTask, completed: !mappedTask.completed};
             } else {
                 return mappedTask;
@@ -32,7 +30,7 @@ function TodoList() {
         }));
     }
 
-    function addTask(text:string) {
+    function addTask(text: string): void {
         const newTask = {
             id: Date.now(),
             text: text,
@@ -44,25 +42,56 @@ function TodoList() {
     return (
         <div className="todo-list">
             <h1>To do-list</h1>
-                {tasks.map(task => (
-                        <div className={`task ${task.completed ? 'completed' : ''}`} key={task.id}>
-                            <input type="checkbox" checked={task.completed}
-                                   onChange={() => checkboxChangedStatus(task.id)}/>
-                            <p>{task.text}</p>
-                            <button onClick={() => deleteTask(task.id)}>X</button>
-                        </div>
-                    )
-                )}
+            {tasks.map(mappedTask => (
+                <TodoItem
+                    key={mappedTask.id}
+                    task={mappedTask}
+                    checkboxChangedStatus={() => checkboxChangedStatus(mappedTask.id)}
+                    deleteTask={() => deleteTask(mappedTask.id)}
+                />
+            ))}
             <button onClick={() => setIsPopupVisible(true)}>Add</button>
             {isPopupVisible && (
-                <div className="popup">
-                    <input value={popupText} onChange={(e) => setPopupText(e.target.value)}/>
-                    <button onClick={()=>{addTask(popupText); setIsPopupVisible(false); setPopupText("");}}>Add</button>
-                    <button onClick={() => setIsPopupVisible(false)}>Cancel</button>
-                </div>
+                <TodoPopup addTask={addTask} setIsPopupVisible={setIsPopupVisible}/>
             )}
         </div>
     );
+}
+
+function TodoItem({task, checkboxChangedStatus, deleteTask}
+                      : {
+    task: { id: number; completed: boolean; text: string };
+    checkboxChangedStatus: (id: number) => void;
+    deleteTask: (id: number) => void
+}) {
+    return (
+        <div className={`task ${task.completed ? 'completed' : ''}`} key={task.id}>
+            <input type="checkbox" checked={task.completed}
+                   onChange={() => checkboxChangedStatus(task.id)}/>
+            <p>{task.text}</p>
+            <button onClick={() => deleteTask(task.id)}>X</button>
+        </div>
+    )
+}
+
+function TodoPopup({addTask, setIsPopupVisible}: {
+    addTask: (text: string) => void;
+    setIsPopupVisible: (value: boolean) => void
+}) {
+    const [popupText, setPopupText] = useState("");
+
+    return (
+        <div className="popup">
+            <input value={popupText} onChange={(e) => setPopupText(e.target.value)}/>
+            <button onClick={() => {
+                addTask(popupText);
+                setIsPopupVisible(false);
+                setPopupText("");
+            }}>Add
+            </button>
+            <button onClick={() => setIsPopupVisible(false)}>Cancel</button>
+        </div>
+    )
 }
 
 export default TodoList;
