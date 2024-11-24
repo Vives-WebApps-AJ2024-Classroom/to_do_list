@@ -1,7 +1,7 @@
-import {useState} from "react";
+import {Key, useEffect, useState} from "react";
 
 function TodoList() {
-    const [tasks, setTasks] = useState([
+    const defaultTasks = [
         {
             id: 1,
             text: "Studeren Web Apps",
@@ -12,16 +12,25 @@ function TodoList() {
             text: "Taak regeltechnieken",
             completed: false
         }
-    ]);
+    ];
 
+    const [tasks, setTasks] = useState(() => {
+        // Load tasks from localStorage
+        const savedTasks = localStorage.getItem("tasks");
+        return savedTasks && JSON.parse(savedTasks).length > 0 ? JSON.parse(savedTasks) : defaultTasks;
+    });
     const [isPopupVisible, setIsPopupVisible] = useState(false);
 
+    useEffect(() => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }, [tasks]);
+
     function deleteTask(id: number): void {
-        setTasks(tasks.filter((filterTask) => filterTask.id !== id));
+        setTasks(tasks.filter((filterTask:{id:any}) => filterTask.id !== id));
     }
 
     function checkboxChangedStatus(id: number): void {
-        setTasks(tasks.map(mappedTask => {
+        setTasks(tasks.map((mappedTask: { id: number; completed: any; }) => {
             if (mappedTask.id === id) {
                 return {...mappedTask, completed: !mappedTask.completed};
             } else {
@@ -42,7 +51,7 @@ function TodoList() {
     return (
         <div className="todo-list">
             <h1>To do-list</h1>
-            {tasks.map(mappedTask => (
+            {tasks.map((mappedTask: { id: any; completed: boolean; text: string; }) => (
                 <TodoItem
                     key={mappedTask.id}
                     task={mappedTask}
