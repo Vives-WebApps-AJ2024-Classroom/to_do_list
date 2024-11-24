@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {text} from "node:stream/consumers";
 
 function TodoList() {
     const [tasks, setTasks] = useState([
@@ -14,6 +15,9 @@ function TodoList() {
         }
     ])
 
+    const [popupText, setPopupText] = useState("");
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+
     function deleteTask(id: number) {
         setTasks(tasks.filter((filterTask) => filterTask.id !== id))
     }
@@ -28,6 +32,15 @@ function TodoList() {
         }));
     }
 
+    function addTask(text:string) {
+        const newTask = {
+            id: Date.now(),
+            text: text,
+            completed: false
+        }
+        setTasks([...tasks, newTask]);
+    }
+
     return (
         <div className="todo-list">
             <h1>To do-list</h1>
@@ -40,8 +53,16 @@ function TodoList() {
                         </div>
                     )
                 )}
-            </div>
-            );
-            }
+            <button onClick={() => setIsPopupVisible(true)}>Add</button>
+            {isPopupVisible && (
+                <div className="popup">
+                    <input value={popupText} onChange={(e) => setPopupText(e.target.value)}/>
+                    <button onClick={()=>{addTask(popupText); setIsPopupVisible(false); setPopupText("");}}>Add</button>
+                    <button onClick={() => setIsPopupVisible(false)}>Cancel</button>
+                </div>
+            )}
+        </div>
+    );
+}
 
-            export default TodoList;
+export default TodoList;
